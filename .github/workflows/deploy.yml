@@ -31,6 +31,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env:
+          VITE_API_URL: https://postulaciones-back.onrender.com/api
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
