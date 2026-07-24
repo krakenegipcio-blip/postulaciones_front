@@ -16,6 +16,7 @@ import ModalidadesPage from './pages/ModalidadesPage';
 import UbicacionesPage from './pages/UbicacionesPage';
 import EstadosPage from './pages/EstadosPage';
 import NivelesPage from './pages/NivelesPage';
+import FasesPage from './pages/FasesPage';
 import ValoresDefaultPage from './pages/ValoresDefaultPage';
 
 export default function App() {
@@ -65,6 +66,7 @@ export default function App() {
         {page === 'ubicaciones' && <UbicacionesPage {...props} />}
         {page === 'estados' && <EstadosPage {...props} />}
         {page === 'niveles' && <NivelesPage {...props} />}
+        {page === 'fases' && <FasesPage {...props} />}
         {page === 'valores-default' && <ValoresDefaultPage {...props} />}
       </div>
       <ToastContainer />

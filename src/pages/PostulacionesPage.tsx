@@ -4,7 +4,7 @@ import { apiFetch } from '../lib/api';
 import type { PostulacionRow } from '../lib/api';
 import { useFilterStore } from '../store/filterStore';
 import { usePostulaciones } from '../hooks/usePostulaciones';
-import { useEmpresas, useCargos, useEstados, usePlataformas, useModalidades, useUbicaciones, useTecnologias, useMetodos, useNiveles, useFasesSeguimiento } from '../hooks/useData';
+import { useEmpresas, useCargos, useEstados, usePlataformas, useModalidades, useUbicaciones, useTecnologias, useMetodos, useNiveles, useFasesSeguimiento, useBundles } from '../hooks/useData';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useLongPress } from '../hooks/useLongPress';
 import Header from '../components/layout/Header';
@@ -110,8 +110,9 @@ export default function PostulacionesPage({ onMenuOpen }: Props) {
   const { data: ubicaciones } = useUbicaciones();
   const { data: tecnologias, reload: reloadTecnologias } = useTecnologias();
   const { data: metodos } = useMetodos();
-  const { data: niveles } = useNiveles();
-  const { data: fasesSeguimiento } = useFasesSeguimiento();
+  const niveles = useNiveles();
+  const fasesSeguimiento = useFasesSeguimiento();
+  const bundles = useBundles();
 
   const isMobile = useIsMobile();
 
@@ -384,8 +385,9 @@ export default function PostulacionesPage({ onMenuOpen }: Props) {
           ubicaciones={ubicaciones}
           tecnologias={tecnologias}
           metodos={metodos}
-          niveles={niveles}
-          fasesSeguimiento={fasesSeguimiento}
+          niveles={niveles.data}
+          fasesSeguimiento={fasesSeguimiento.data}
+          bundles={bundles.data}
           readOnly={formReadOnly}
           onSave={() => { setFormOpen(false); reload(); }}
           onCancel={() => setFormOpen(false)}

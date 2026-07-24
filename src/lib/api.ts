@@ -40,12 +40,8 @@ export type PostulacionSeguimiento = {
   id_postulacion: number;
   id_fase_seguimiento: number;
   id_metodo_evaluacion: number | null;
-  titulo: string | null;
   nota: string | null;
   fecha_evento: string;
-  fecha_limite: string | null;
-  resultado: ResultadoSeguimiento;
-  orden: number;
   created_at?: string;
   updated_at?: string;
   fase: FaseSeguimiento;
@@ -55,12 +51,8 @@ export type PostulacionSeguimiento = {
 export type SeguimientoPayload = {
   id_fase_seguimiento: number;
   id_metodo_evaluacion: number | null;
-  titulo: string | null;
   nota: string | null;
   fecha_evento: string;
-  fecha_limite: string | null;
-  resultado: ResultadoSeguimiento;
-  orden: number;
 };
 
 export type PostulacionRow = {
@@ -90,4 +82,26 @@ export type PostulacionRow = {
   nivel_experiencia?: NivelExperiencia;
   tecnologias?: Tecnologia[];
   metodos?: MetodoEvaluacion[];
+};
+
+export type BundlePostulacion = {
+  id: number;
+  nombre: string;
+  id_empresa: number | null;
+  id_cargo: number | null;
+  id_nivel: number | null;
+  id_plataforma: number | null;
+  id_ubicacion: number | null;
+  id_modalidad: number | null;
+  id_estado: number | null;
+  sueldo_ofrecido: number | null;
+  sueldo_pedido: number | null;
+  created_at?: string;
+  empresa?: Empresa | null;
+  cargo?: Cargo | null;
+  nivel?: NivelExperiencia | null;
+  plataforma?: Plataforma | null;
+  ubicacion?: Ubicacion | null;
+  modalidad?: Modalidad | null;
+  estado?: Estado | null;
 };

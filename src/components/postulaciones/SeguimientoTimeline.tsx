@@ -31,12 +31,8 @@ interface Props {
 type StepForm = {
   id_fase_seguimiento: string;
   id_metodo_evaluacion: string;
-  titulo: string;
   nota: string;
   fecha_evento: string;
-  fecha_limite: string;
-  resultado: ResultadoSeguimiento;
-  orden: string;
 };
 
 const iconMap: Record<string, LucideIcon> = {
@@ -53,13 +49,7 @@ const iconMap: Record<string, LucideIcon> = {
   'circle-slash': CircleSlash,
 };
 
-const resultadoLabels: Record<ResultadoSeguimiento, string> = {
-  pendiente: 'Pendiente',
-  completado: 'Completado',
-  aprobado: 'Aprobado',
-  rechazado: 'Rechazado',
-  cancelado: 'Cancelado',
-};
+
 
 const today = () => new Date().toISOString().split('T')[0];
 
@@ -74,12 +64,8 @@ function emptyForm(fases: FaseSeguimiento[]): StepForm {
   return {
     id_fase_seguimiento: fase ? String(fase.id) : '',
     id_metodo_evaluacion: '',
-    titulo: '',
     nota: '',
     fecha_evento: today(),
-    fecha_limite: '',
-    resultado: 'pendiente',
-    orden: fase ? String(fase.orden_default) : '0',
   };
 }
 
@@ -87,26 +73,17 @@ function toForm(step: PostulacionSeguimiento): StepForm {
   return {
     id_fase_seguimiento: String(step.id_fase_seguimiento),
     id_metodo_evaluacion: step.id_metodo_evaluacion ? String(step.id_metodo_evaluacion) : '',
-    titulo: step.titulo ?? '',
     nota: step.nota ?? '',
     fecha_evento: step.fecha_evento ? step.fecha_evento.split('T')[0] : today(),
-    fecha_limite: step.fecha_limite ? step.fecha_limite.split('T')[0] : '',
-    resultado: step.resultado,
-    orden: String(step.orden ?? 0),
   };
 }
 
-function toPayload(form: StepForm, fases: FaseSeguimiento[]): SeguimientoPayload {
-  const fase = fases.find(f => String(f.id) === form.id_fase_seguimiento);
+function toPayload(form: StepForm): SeguimientoPayload {
   return {
     id_fase_seguimiento: Number(form.id_fase_seguimiento),
-    id_metodo_evaluacion: form.id_metodo_evaluacion ? Number(form.id_metodo_evaluacion) : null,
-    titulo: form.titulo.trim() || null,
-    nota: form.nota.trim() || null,
+    id_metodo_evaluacion: form.id_metodo_evaluacion ? Number(form.id_metodo_evaluacion) : undefined,
+    nota: form.nota.trim() || undefined,
     fecha_evento: form.fecha_evento,
-    fecha_limite: form.fecha_limite || null,
-    resultado: form.resultado,
-    orden: form.orden ? Number(form.orden) : (fase?.orden_default ?? 0),
   };
 }
 
@@ -146,8 +123,7 @@ export default function SeguimientoTimeline({ postulacionId, fases, metodos, rea
   };
 
   const handleFaseChange = (value: string) => {
-    const fase = sortedFases.find(f => String(f.id) === value);
-    setForm(prev => ({ ...prev, id_fase_seguimiento: value, orden: fase ? String(fase.orden_default) : prev.orden }));
+    setForm(prev => ({ ...prev, id_fase_seguimiento: value }));
   };
 
   const handleSave = async () => {
@@ -156,7 +132,7 @@ export default function SeguimientoTimeline({ postulacionId, fases, metodos, rea
     setSaving(true);
     setLocalError('');
     try {
-      const payload = toPayload(form, sortedFases);
+      const payload = toPayload(form);
       if (editing) await updateStep(editing.id, payload);
       else await createStep(payload);
       closeForm();
@@ -231,50 +207,11 @@ export default function SeguimientoTimeline({ postulacionId, fases, metodos, rea
             </div>
 
             <div className="col-span-2">
-              <label className="text-xs text-slate-400 mb-1 block">Título opcional</label>
-              <input
-                value={form.titulo}
-                onChange={e => set('titulo', e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-blue-500"
-                placeholder="Ej: Prueba frontend"
-              />
-            </div>
-
-            <div>
               <label className="text-xs text-slate-400 mb-1 block">Fecha</label>
               <input
                 type="date"
                 value={form.fecha_evento}
                 onChange={e => set('fecha_evento', e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-slate-400 mb-1 block">Límite</label>
-              <input
-                type="date"
-                value={form.fecha_limite}
-                onChange={e => set('fecha_limite', e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs text-slate-400 mb-1 block">Resultado</label>
-              <select
-                value={form.resultado}
-                onChange={e => set('resultado', e.target.value as ResultadoSeguimiento)}
-                className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-blue-500"
-              >
-                {Object.entries(resultadoLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-slate-400 mb-1 block">Orden</label>
-              <input
-                type="number"
-                value={form.orden}
-                onChange={e => set('orden', e.target.value)}
                 className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-blue-500"
               />
             </div>
@@ -319,7 +256,7 @@ export default function SeguimientoTimeline({ postulacionId, fases, metodos, rea
             <div className="absolute left-[13px] top-2 bottom-2 w-0.5 bg-slate-700" />
             {rows.map(step => {
               const Icon = iconMap[step.fase.icono ?? ''] ?? Circle;
-              const title = step.titulo || step.fase.nombre;
+              const title = step.fase.nombre;
               return (
                 <div key={step.id} className="relative">
                   <div className="absolute -left-8 top-3 w-7 h-7 rounded-full flex items-center justify-center ring-4 ring-slate-800" style={{ backgroundColor: step.fase.color_hex }}>
@@ -344,17 +281,9 @@ export default function SeguimientoTimeline({ postulacionId, fases, metodos, rea
                     </div>
 
                     <div className="flex flex-wrap gap-1.5 mt-2">
-                      <span className="text-[11px] px-2 py-0.5 rounded-full border" style={{ color: step.fase.color_hex, borderColor: `${step.fase.color_hex}88`, backgroundColor: `${step.fase.color_hex}22` }}>
-                        {resultadoLabels[step.resultado]}
-                      </span>
                       {step.metodo && (
                         <span className="text-[11px] px-2 py-0.5 rounded-full border" style={{ color: step.metodo.color_hex, borderColor: `${step.metodo.color_hex}88`, backgroundColor: `${step.metodo.color_hex}22` }}>
                           {step.metodo.nombre}
-                        </span>
-                      )}
-                      {step.fecha_limite && (
-                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-200 border border-amber-400/30">
-                          Límite {formatDate(step.fecha_limite)}
                         </span>
                       )}
                     </div>

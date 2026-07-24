@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, X, ChevronDown } from 'lucide-react';
 import { apiFetch } from '../../lib/api';
-import type { PostulacionRow, Empresa, Cargo, Estado, Plataforma, Modalidad, Ubicacion, Tecnologia, MetodoEvaluacion, NivelExperiencia, FaseSeguimiento } from '../../lib/api';
+import type { PostulacionRow, Empresa, Cargo, Estado, Plataforma, Modalidad, Ubicacion, Tecnologia, MetodoEvaluacion, NivelExperiencia, FaseSeguimiento, BundlePostulacion } from '../../lib/api';
 import Badge from '../ui/Badge';
 import { showToast } from '../ui/Toast';
 import SeguimientoTimeline from './SeguimientoTimeline';
@@ -18,6 +18,7 @@ interface Props {
   metodos: MetodoEvaluacion[];
   niveles: NivelExperiencia[];
   fasesSeguimiento: FaseSeguimiento[];
+  bundles: BundlePostulacion[];
   onSave: () => void;
   onCancel: () => void;
   reloadEmpresas: () => Promise<void>;
@@ -202,7 +203,7 @@ function ComboBox({ label, placeholder, items, value, onChange, onCreateNew, ent
   );
 }
 
-export default function PostulacionForm({ item, empresas, cargos, estados, plataformas, modalidades, ubicaciones, tecnologias, metodos, niveles, fasesSeguimiento, onSave, onCancel, reloadEmpresas, reloadCargos, reloadTecnologias, readOnly = false }: Props) {
+export default function PostulacionForm({ item, empresas, cargos, estados, plataformas, modalidades, ubicaciones, tecnologias, metodos, niveles, fasesSeguimiento, bundles, onSave, onCancel, reloadEmpresas, reloadCargos, reloadTecnologias, readOnly = false }: Props) {
   const estadoDefault = estados.find(e => e.nombre === 'En Espera')?.id ?? (estados[0]?.id ?? 0);
   const [form, setForm] = useState<FormState>(() => toForm(item, estadoDefault));
   const [saving, setSaving] = useState(false);
@@ -318,6 +319,35 @@ export default function PostulacionForm({ item, empresas, cargos, estados, plata
   return (
     <div className="space-y-6">
       {error && <div className="bg-red-900/30 border border-red-700 text-red-300 text-sm px-4 py-2 rounded-lg">{error}</div>}
+
+      {!item && bundles.length > 0 && (
+        <div className="flex items-center gap-3 bg-slate-800/60 border border-slate-700/50 rounded-lg px-4 py-2.5">
+          <span className="text-xs text-slate-400 font-semibold whitespace-nowrap">Aplicar Bundle:</span>
+          <select
+            onChange={e => {
+              const b = bundles.find(b => String(b.id) === e.target.value);
+              if (!b) return;
+              setForm(prev => ({
+                ...prev,
+                id_empresa: b.id_empresa ? String(b.id_empresa) : '',
+                id_cargo: b.id_cargo ? String(b.id_cargo) : '',
+                id_nivel: b.id_nivel ? String(b.id_nivel) : '',
+                id_plataforma: b.id_plataforma ? String(b.id_plataforma) : '',
+                id_ubicacion: b.id_ubicacion ? String(b.id_ubicacion) : '',
+                id_modalidad: b.id_modalidad ? String(b.id_modalidad) : '',
+                id_estado: b.id_estado ? String(b.id_estado) : prev.id_estado,
+                sueldo_ofrecido: b.sueldo_ofrecido != null ? String(b.sueldo_ofrecido) : '',
+                sueldo_pedido: b.sueldo_pedido != null ? String(b.sueldo_pedido) : '',
+              }));
+            }}
+            className="flex-1 bg-slate-700 border border-slate-600 text-slate-100 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500"
+            defaultValue=""
+          >
+            <option value="" disabled>Seleccionar bundle...</option>
+            {bundles.map(b => <option key={b.id} value={b.id}>{b.nombre}</option>)}
+          </select>
+        </div>
+      )}
 
       <div className={`grid gap-5 sm:gap-6 ${showSeguimiento ? 'grid-cols-1 lg:grid-cols-4' : 'grid-cols-1 lg:grid-cols-3'}`}>
         <div className="space-y-4">
