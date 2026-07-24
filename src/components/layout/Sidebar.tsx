@@ -1,4 +1,4 @@
-import { X, BarChart2, Briefcase, Building2, Tag, MapPin, Monitor, Users, Layers, Cpu, CheckSquare, Award, LogOut } from 'lucide-react';
+import { X, BarChart2, Briefcase, Building2, Tag, MapPin, Monitor, Users, Layers, Cpu, CheckSquare, Award, LogOut, Settings } from 'lucide-react';
 import { apiFetch } from '../../lib/api';
 import { useAuthStore } from '../../store/authStore';
 
@@ -13,7 +13,8 @@ export type Page =
   | 'modalidades'
   | 'ubicaciones'
   | 'estados'
-  | 'niveles';
+  | 'niveles'
+  | 'valores-default';
 
 interface SidebarProps {
   open: boolean;
@@ -37,6 +38,7 @@ const NAV = [
     { id: 'ubicaciones' as Page, label: 'Ubicaciones', icon: MapPin },
     { id: 'estados' as Page, label: 'Estados', icon: Tag },
     { id: 'niveles' as Page, label: 'Niveles', icon: Award },
+    { id: 'valores-default' as Page, label: 'Valores Default', icon: Settings },
   ]},
 ];
 
