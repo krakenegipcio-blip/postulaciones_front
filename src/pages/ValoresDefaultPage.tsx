@@ -42,7 +42,7 @@ function toForm(b: BundlePostulacion): BundleForm {
   };
 }
 
-function toPayload(f: BundleForm) {
+function toPayload(f: BundleForm, es_default: boolean) {
   return {
     nombre: f.nombre.trim(),
     id_empresa: f.id_empresa ? Number(f.id_empresa) : null,
@@ -54,6 +54,7 @@ function toPayload(f: BundleForm) {
     id_estado: f.id_estado ? Number(f.id_estado) : null,
     sueldo_ofrecido: f.sueldo_ofrecido ? Number(f.sueldo_ofrecido) : null,
     sueldo_pedido: f.sueldo_pedido ? Number(f.sueldo_pedido) : null,
+    es_default,
   };
 }
 
@@ -72,19 +73,20 @@ export default function ValoresDefaultPage({ onMenuOpen }: Props) {
   const [editing, setEditing] = useState<BundlePostulacion | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<BundleForm>(emptyForm());
+  const [esDefault, setEsDefault] = useState(false);
   const [deleteItem, setDeleteItem] = useState<BundlePostulacion | null>(null);
   const [saving, setSaving] = useState(false);
 
   const set = (key: keyof BundleForm, value: string) => setForm(prev => ({ ...prev, [key]: value }));
 
-  const openNew = () => { setEditing(null); setForm(emptyForm()); setFormOpen(true); };
-  const openEdit = (row: BundlePostulacion) => { setEditing(row); setForm(toForm(row)); setFormOpen(true); };
+  const openNew = () => { setEditing(null); setForm(emptyForm()); setEsDefault(false); setFormOpen(true); };
+  const openEdit = (row: BundlePostulacion) => { setEditing(row); setForm(toForm(row)); setEsDefault(row.es_default); setFormOpen(true); };
 
   const handleSave = async () => {
     if (!form.nombre.trim()) return;
     setSaving(true);
     try {
-      const payload = toPayload(form);
+      const payload = toPayload(form, esDefault);
       if (editing) {
         await apiFetch(`/bundles/${editing.id}`, { method: 'PUT', body: JSON.stringify(payload) });
       } else {
@@ -128,6 +130,7 @@ export default function ValoresDefaultPage({ onMenuOpen }: Props) {
           { key: 'cargo', label: 'Cargo', render: (r: BundlePostulacion) => r.cargo?.nombre || '—' },
           { key: 'nivel', label: 'Nivel', render: (r: BundlePostulacion) => r.nivel?.nombre || '—' },
           { key: 'estado', label: 'Estado', render: (r: BundlePostulacion) => r.estado?.nombre || '—' },
+          { key: 'es_default', label: 'Default', render: (r: BundlePostulacion) => r.es_default ? <span className="text-emerald-400 font-bold">Sí</span> : '—' },
         ]}
         total={data.length}
         page={page}
@@ -219,6 +222,19 @@ export default function ValoresDefaultPage({ onMenuOpen }: Props) {
               <input type="number" value={form.sueldo_pedido} onChange={e => set('sueldo_pedido', e.target.value)}
                 className={inputClass} placeholder="Sin valor por defecto" />
             </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setEsDefault(!esDefault)}
+              className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
+                esDefault ? 'bg-emerald-600 border-emerald-500' : 'bg-slate-700 border-slate-500'
+              }`}
+            >
+              {esDefault && <div className="w-2 h-2 bg-white rounded-sm" />}
+            </button>
+            <span className="text-sm text-slate-300">Establecer como Bundle por Defecto al crear postulaciones</span>
           </div>
 
           <div className="flex gap-3 pt-2">

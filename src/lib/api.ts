@@ -96,6 +96,7 @@ export type BundlePostulacion = {
   id_estado: number | null;
   sueldo_ofrecido: number | null;
   sueldo_pedido: number | null;
+  es_default: boolean;
   created_at?: string;
   empresa?: Empresa | null;
   cargo?: Cargo | null;

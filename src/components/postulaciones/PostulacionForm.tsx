@@ -46,9 +46,29 @@ type FormState = {
   metodos: number[];
 };
 
-function toForm(item: PostulacionRow | null, estadoDefault: number): FormState {
+function toForm(item: PostulacionRow | null, estadoDefault: number, defaultBundle?: BundlePostulacion): FormState {
   if (!item) {
     const today = new Date().toISOString().split('T')[0];
+    if (defaultBundle) {
+      return {
+        id_empresa: defaultBundle.id_empresa ? String(defaultBundle.id_empresa) : '',
+        id_cargo: defaultBundle.id_cargo ? String(defaultBundle.id_cargo) : '',
+        id_estado: defaultBundle.id_estado ? String(defaultBundle.id_estado) : String(estadoDefault),
+        url: '',
+        id_plataforma: defaultBundle.id_plataforma ? String(defaultBundle.id_plataforma) : '',
+        id_modalidad: defaultBundle.id_modalidad ? String(defaultBundle.id_modalidad) : '',
+        id_ubicacion: defaultBundle.id_ubicacion ? String(defaultBundle.id_ubicacion) : '',
+        dias_presenciales: '',
+        sueldo_ofrecido: defaultBundle.sueldo_ofrecido != null ? String(defaultBundle.sueldo_ofrecido) : '',
+        cantidad_solicitudes: '',
+        id_nivel: defaultBundle.id_nivel ? String(defaultBundle.id_nivel) : '',
+        sueldo_pedido: defaultBundle.sueldo_pedido != null ? String(defaultBundle.sueldo_pedido) : '',
+        fecha_postulacion: today,
+        descripcion: '',
+        tecnologias: [],
+        metodos: [],
+      };
+    }
     return {
       id_empresa: '', id_cargo: '', id_estado: String(estadoDefault),
       url: '', id_plataforma: '', id_modalidad: '', id_ubicacion: '',
@@ -205,7 +225,8 @@ function ComboBox({ label, placeholder, items, value, onChange, onCreateNew, ent
 
 export default function PostulacionForm({ item, empresas, cargos, estados, plataformas, modalidades, ubicaciones, tecnologias, metodos, niveles, fasesSeguimiento, bundles, onSave, onCancel, reloadEmpresas, reloadCargos, reloadTecnologias, readOnly = false }: Props) {
   const estadoDefault = estados.find(e => e.nombre === 'En Espera')?.id ?? (estados[0]?.id ?? 0);
-  const [form, setForm] = useState<FormState>(() => toForm(item, estadoDefault));
+  const defaultBundle = bundles?.find(b => b.es_default);
+  const [form, setForm] = useState<FormState>(() => toForm(item, estadoDefault, defaultBundle));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [tecnoSearch, setTecnoSearch] = useState('');
@@ -215,9 +236,9 @@ export default function PostulacionForm({ item, empresas, cargos, estados, plata
   const showSeguimiento = Boolean(item);
 
   useEffect(() => {
-    setForm(toForm(item, estadoDefault));
+    setForm(toForm(item, estadoDefault, defaultBundle));
     setError('');
-  }, [item, estadoDefault]);
+  }, [item, estadoDefault, defaultBundle]);
 
   const set = (k: keyof FormState, v: string | number[]) => setForm(prev => ({ ...prev, [k]: v }));
 
@@ -341,7 +362,7 @@ export default function PostulacionForm({ item, empresas, cargos, estados, plata
               }));
             }}
             className="flex-1 bg-slate-700 border border-slate-600 text-slate-100 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500"
-            defaultValue=""
+            defaultValue={defaultBundle ? String(defaultBundle.id) : ""}
           >
             <option value="" disabled>Seleccionar bundle...</option>
             {bundles.map(b => <option key={b.id} value={b.id}>{b.nombre}</option>)}
