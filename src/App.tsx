@@ -18,6 +18,7 @@ import EstadosPage from './pages/EstadosPage';
 import NivelesPage from './pages/NivelesPage';
 import FasesPage from './pages/FasesPage';
 import ValoresDefaultPage from './pages/ValoresDefaultPage';
+import PreguntasFrecuentesPage from './pages/PreguntasFrecuentesPage';
 
 export default function App() {
   const [page, setPage] = useState<Page>('postulaciones');
@@ -56,6 +57,7 @@ export default function App() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {page === 'postulaciones' && <PostulacionesPage {...props} />}
+        {page === 'preguntas-frecuentes' && <PreguntasFrecuentesPage {...props} />}
         {page === 'analisis' && <AnalisisPage {...props} />}
         {page === 'tecnologias' && <TecnologiasPage {...props} />}
         {page === 'metodos' && <MetodosPage {...props} />}
