@@ -19,6 +19,7 @@ import NivelesPage from './pages/NivelesPage';
 import FasesPage from './pages/FasesPage';
 import ValoresDefaultPage from './pages/ValoresDefaultPage';
 import PreguntasFrecuentesPage from './pages/PreguntasFrecuentesPage';
+import AreasPage from './pages/AreasPage';
 
 export default function App() {
   const [page, setPage] = useState<Page>('postulaciones');
@@ -70,6 +71,7 @@ export default function App() {
         {page === 'niveles' && <NivelesPage {...props} />}
         {page === 'fases' && <FasesPage {...props} />}
         {page === 'valores-default' && <ValoresDefaultPage {...props} />}
+        {page === 'areas' && <AreasPage {...props} />}
       </div>
       <ToastContainer />
     </div>

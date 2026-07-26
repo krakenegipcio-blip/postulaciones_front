@@ -1,4 +1,4 @@
-import { X, BarChart2, Briefcase, Building2, Tag, MapPin, Monitor, Users, Layers, Cpu, CheckSquare, Award, LogOut, Settings, Milestone, HelpCircle } from 'lucide-react';
+import { X, BarChart2, Briefcase, Building2, Tag, MapPin, Monitor, Users, Layers, Cpu, CheckSquare, Award, LogOut, Settings, Milestone, HelpCircle, LayoutGrid } from 'lucide-react';
 import { apiFetch } from '../../lib/api';
 import { useAuthStore } from '../../store/authStore';
 
@@ -16,7 +16,8 @@ export type Page =
   | 'niveles'
   | 'fases'
   | 'valores-default'
-  | 'preguntas-frecuentes';
+  | 'preguntas-frecuentes'
+  | 'areas';
 
 interface SidebarProps {
   open: boolean;
@@ -43,6 +44,7 @@ const NAV = [
     { id: 'niveles' as Page, label: 'Niveles', icon: Award },
     { id: 'fases' as Page, label: 'Fases Seguimiento', icon: Milestone },
     { id: 'valores-default' as Page, label: 'Valores Default', icon: Settings },
+    { id: 'areas' as Page, label: 'Áreas', icon: LayoutGrid },
   ]},
 ];
 
