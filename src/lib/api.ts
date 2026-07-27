@@ -90,6 +90,20 @@ export type PostulacionRow = {
   metodos?: MetodoEvaluacion[];
 };
 
+export type PreguntaFrecuente = {
+  id: number;
+  pregunta: string;
+  respuesta: string;
+  frecuencia: number;
+  id_area: number | null;
+  id_tecnologia: number | null;
+  activa: boolean;
+  usuario_id: number;
+  created_at?: string;
+  area?: Area;
+  tecnologia?: Tecnologia;
+};
+
 export type BundlePostulacion = {
   id: number;
   nombre: string;
@@ -100,6 +114,8 @@ export type BundlePostulacion = {
   id_ubicacion: number | null;
   id_modalidad: number | null;
   id_estado: number | null;
+  id_area: number | null;
+  id_duracion: number | null;
   sueldo_ofrecido: number | null;
   sueldo_pedido: number | null;
   es_default: boolean;
@@ -111,4 +127,6 @@ export type BundlePostulacion = {
   ubicacion?: Ubicacion | null;
   modalidad?: Modalidad | null;
   estado?: Estado | null;
+  area?: Area | null;
+  duracion?: Duracion | null;
 };

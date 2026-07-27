@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Settings } from 'lucide-react';
 import { apiFetch } from '../lib/api';
 import type { BundlePostulacion } from '../lib/api';
-import { useBundles, useEmpresas, useCargos, useNiveles, usePlataformas, useUbicaciones, useModalidades, useEstados } from '../hooks/useData';
+import { useBundles, useEmpresas, useCargos, useNiveles, usePlataformas, useUbicaciones, useModalidades, useEstados, useAreas, useDuraciones } from '../hooks/useData';
 import MaintainerTable from '../components/maintainer/MaintainerTable';
 import Modal from '../components/ui/Modal';
 import Header from '../components/layout/Header';
@@ -12,6 +12,8 @@ interface Props { onMenuOpen: () => void; }
 type BundleForm = {
   nombre: string;
   id_empresa: string;
+  id_area: string;
+  id_duracion: string;
   id_cargo: string;
   id_nivel: string;
   id_plataforma: string;
@@ -23,7 +25,7 @@ type BundleForm = {
 };
 
 const emptyForm = (): BundleForm => ({
-  nombre: '', id_empresa: '', id_cargo: '', id_nivel: '', id_plataforma: '',
+  nombre: '', id_empresa: '', id_area: '', id_duracion: '', id_cargo: '', id_nivel: '', id_plataforma: '',
   id_ubicacion: '', id_modalidad: '', id_estado: '', sueldo_ofrecido: '', sueldo_pedido: '',
 });
 
@@ -31,6 +33,8 @@ function toForm(b: BundlePostulacion): BundleForm {
   return {
     nombre: b.nombre,
     id_empresa: b.id_empresa ? String(b.id_empresa) : '',
+    id_area: b.id_area ? String(b.id_area) : '',
+    id_duracion: b.id_duracion ? String(b.id_duracion) : '',
     id_cargo: b.id_cargo ? String(b.id_cargo) : '',
     id_nivel: b.id_nivel ? String(b.id_nivel) : '',
     id_plataforma: b.id_plataforma ? String(b.id_plataforma) : '',
@@ -46,6 +50,8 @@ function toPayload(f: BundleForm, es_default: boolean) {
   return {
     nombre: f.nombre.trim(),
     id_empresa: f.id_empresa ? Number(f.id_empresa) : null,
+    id_area: f.id_area ? Number(f.id_area) : null,
+    id_duracion: f.id_duracion ? Number(f.id_duracion) : null,
     id_cargo: f.id_cargo ? Number(f.id_cargo) : null,
     id_nivel: f.id_nivel ? Number(f.id_nivel) : null,
     id_plataforma: f.id_plataforma ? Number(f.id_plataforma) : null,
@@ -67,6 +73,8 @@ export default function ValoresDefaultPage({ onMenuOpen }: Props) {
   const ubicaciones = useUbicaciones();
   const modalidades = useModalidades();
   const estados = useEstados();
+  const areas = useAreas();
+  const duraciones = useDuraciones();
 
   const [page, setPage] = useState(1);
   const perPage = 15;
@@ -156,6 +164,20 @@ export default function ValoresDefaultPage({ onMenuOpen }: Props) {
               <select value={form.id_empresa} onChange={e => set('id_empresa', e.target.value)} className={selectClass}>
                 <option value="">Sin valor por defecto</option>
                 {empresas.data.map(e => <option key={e.id} value={e.id}>{e.nombre}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-slate-400 mb-1 block">Duración</label>
+              <select value={form.id_duracion} onChange={e => set('id_duracion', e.target.value)} className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                <option value="">Sin valor por defecto</option>
+                {duraciones.data.map(x => <option key={x.id} value={x.id}>{x.nombre}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-slate-400 mb-1 block">Área</label>
+              <select value={form.id_area} onChange={e => set('id_area', e.target.value)} className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
+                <option value="">Sin valor por defecto</option>
+                {areas.data.map(x => <option key={x.id} value={x.id}>{x.nombre}</option>)}
               </select>
             </div>
             <div>
