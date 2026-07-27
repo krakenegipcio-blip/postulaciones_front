@@ -4,7 +4,7 @@ import { apiFetch } from '../lib/api';
 import type { PostulacionRow } from '../lib/api';
 import { useFilterStore } from '../store/filterStore';
 import { usePostulaciones } from '../hooks/usePostulaciones';
-import { useEmpresas, useCargos, useEstados, usePlataformas, useModalidades, useUbicaciones, useTecnologias, useMetodos, useNiveles, useFasesSeguimiento, useBundles } from '../hooks/useData';
+import { useAreas, useEmpresas, useCargos, useEstados, usePlataformas, useModalidades, useUbicaciones, useTecnologias, useMetodos, useNiveles, useFasesSeguimiento, useBundles } from '../hooks/useData';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useLongPress } from '../hooks/useLongPress';
 import Header from '../components/layout/Header';
@@ -102,6 +102,7 @@ function MobileCard({ row, onTap, onLongPress, index }: {
 export default function PostulacionesPage({ onMenuOpen }: Props) {
   const { filters, setFilters, resetFilters } = useFilterStore();
   const { rows, total, loading, reload } = usePostulaciones(filters);
+  const areas = useAreas();
   const { data: empresas, reload: reloadEmpresas } = useEmpresas();
   const { data: cargos, reload: reloadCargos } = useCargos();
   const { data: estados } = useEstados();
@@ -171,7 +172,7 @@ export default function PostulacionesPage({ onMenuOpen }: Props) {
     return row.modalidad.nombre;
   };
 
-  const hasActiveFilters = !!(filters.id_empresa || filters.id_estado || filters.id_modalidad || filters.id_cargo || filters.tecnologias.length > 0);
+  const hasActiveFilters = !!(filters.id_area || filters.id_empresa || filters.id_estado || filters.id_modalidad || filters.id_cargo || filters.tecnologias.length > 0);
 
   return (
     <div className="flex flex-col h-full">
@@ -201,6 +202,29 @@ export default function PostulacionesPage({ onMenuOpen }: Props) {
           >
             <SlidersHorizontal size={15} />
           </button>
+          
+          <div className="hidden sm:flex items-center gap-2 ml-4 border-l border-slate-700 pl-4 overflow-x-auto">
+            <button
+              onClick={() => setFilters({ id_area: null, page: 1 })}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                filters.id_area === null ? 'bg-slate-700 text-white' : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50'
+              }`}
+            >
+              Todas las áreas
+            </button>
+            {areas.data.map(a => (
+              <button
+                key={a.id}
+                onClick={() => setFilters({ id_area: a.id, page: 1 })}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                  filters.id_area === a.id ? 'bg-slate-700 text-white' : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50'
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: a.color_hex }}></span>
+                {a.nombre}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
@@ -377,6 +401,7 @@ export default function PostulacionesPage({ onMenuOpen }: Props) {
       >
         <PostulacionForm
           item={editing}
+          areas={areas.data}
           empresas={empresas}
           cargos={cargos}
           estados={estados}

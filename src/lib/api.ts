@@ -13,13 +13,14 @@ export const apiFetch = async (endpoint: string, options?: RequestInit) => {
   return res.json();
 };
 
+export type Area = { id: number; nombre: string; color_hex: string; created_at?: string };
 export type Empresa = { id: number; nombre: string; created_at?: string };
-export type Cargo = { id: number; nombre: string; orden?: number; created_at?: string };
+export type Cargo = { id: number; nombre: string; id_area?: number; area?: Area; orden?: number; created_at?: string };
 export type Estado = { id: number; nombre: string; color_hex: string; created_at?: string };
 export type Plataforma = { id: number; nombre: string; created_at?: string };
 export type Modalidad = { id: number; nombre: string; color_hex: string; created_at?: string };
 export type Ubicacion = { id: number; nombre: string; created_at?: string };
-export type Tecnologia = { id: number; nombre: string; id_padre: number | null; color_hex: string; orden?: number; created_at?: string; padre?: Tecnologia };
+export type Tecnologia = { id: number; nombre: string; id_padre: number | null; id_area?: number; area?: Area; color_hex: string; orden?: number; created_at?: string; padre?: Tecnologia };
 export type MetodoEvaluacion = { id: number; nombre: string; color_hex: string; created_at?: string };
 export type NivelExperiencia = { id: number; nombre: string; orden?: number; created_at?: string };
 
@@ -65,6 +66,7 @@ export type PostulacionRow = {
   id_plataforma: number | null;
   id_modalidad: number | null;
   id_ubicacion: number | null;
+  id_area: number | null;
   dias_presenciales: number | null;
   sueldo_ofrecido: number | null;
   cantidad_solicitudes: number | null;
@@ -79,6 +81,7 @@ export type PostulacionRow = {
   plataforma?: Plataforma;
   modalidad?: Modalidad;
   ubicacion?: Ubicacion;
+  area?: Area;
   nivel_experiencia?: NivelExperiencia;
   tecnologias?: Tecnologia[];
   metodos?: MetodoEvaluacion[];

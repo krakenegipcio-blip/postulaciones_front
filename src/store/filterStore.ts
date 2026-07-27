@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 export type PostulacionFilters = {
   search: string;
+  id_area: number | null;
   id_empresa: number | null;
   id_estado: number | null;
   id_modalidad: number | null;
@@ -19,6 +20,7 @@ const STORAGE_KEY = 'postulacion_filters';
 
 const defaultFilters: PostulacionFilters = {
   search: '',
+  id_area: null,
   id_empresa: null,
   id_estado: null,
   id_modalidad: null,

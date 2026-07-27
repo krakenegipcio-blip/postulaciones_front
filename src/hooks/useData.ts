@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { apiFetch } from '../lib/api';
-import type { Empresa, Cargo, Estado, Plataforma, Modalidad, Ubicacion, Tecnologia, MetodoEvaluacion, NivelExperiencia, FaseSeguimiento, BundlePostulacion } from '../lib/api';
+import type { Empresa, Cargo, Estado, Plataforma, Modalidad, Ubicacion, Tecnologia, MetodoEvaluacion, NivelExperiencia, FaseSeguimiento, BundlePostulacion, Area } from '../lib/api';
 
 export function useCatalog<T>(table: string) {
   const [data, setData] = useState<T[]>([]);
@@ -23,6 +23,7 @@ export function useCatalog<T>(table: string) {
   return { data, loading, reload: load };
 }
 
+export function useAreas() { return useCatalog<Area>('area'); }
 export function useEmpresas() { return useCatalog<Empresa>('empresa'); }
 export function useCargos() { return useCatalog<Cargo>('cargo'); }
 export function useEstados() { return useCatalog<Estado>('estado'); }

@@ -17,6 +17,7 @@ export function usePostulaciones(filters: PostulacionFilters) {
       params.set('sort_col', filters.sort_col);
       params.set('sort_dir', filters.sort_dir);
       if (filters.search) params.set('search', filters.search);
+      if (filters.id_area) params.set('id_area', String(filters.id_area));
       if (filters.id_empresa) params.set('id_empresa', String(filters.id_empresa));
       if (filters.id_estado) params.set('id_estado', String(filters.id_estado));
       if (filters.id_modalidad) params.set('id_modalidad', String(filters.id_modalidad));

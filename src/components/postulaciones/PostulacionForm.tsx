@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, X, ChevronDown } from 'lucide-react';
 import { apiFetch } from '../../lib/api';
-import type { PostulacionRow, Empresa, Cargo, Estado, Plataforma, Modalidad, Ubicacion, Tecnologia, MetodoEvaluacion, NivelExperiencia, FaseSeguimiento, BundlePostulacion } from '../../lib/api';
+import type { PostulacionRow, Empresa, Cargo, Estado, Plataforma, Modalidad, Ubicacion, Tecnologia, MetodoEvaluacion, NivelExperiencia, FaseSeguimiento, BundlePostulacion, Area } from '../../lib/api';
 import Badge from '../ui/Badge';
 import { showToast } from '../ui/Toast';
 import SeguimientoTimeline from './SeguimientoTimeline';
 
 interface Props {
   item: PostulacionRow | null;
+  areas: Area[];
   empresas: Empresa[];
   cargos: Cargo[];
   estados: Estado[];
@@ -28,6 +29,7 @@ interface Props {
 }
 
 type FormState = {
+  id_area: string;
   id_empresa: string;
   id_cargo: string;
   id_estado: string;
@@ -70,7 +72,7 @@ function toForm(item: PostulacionRow | null, estadoDefault: number, defaultBundl
       };
     }
     return {
-      id_empresa: '', id_cargo: '', id_estado: String(estadoDefault),
+      id_area: '', id_empresa: '', id_cargo: '', id_estado: String(estadoDefault),
       url: '', id_plataforma: '', id_modalidad: '', id_ubicacion: '',
       dias_presenciales: '', sueldo_ofrecido: '',
       cantidad_solicitudes: '', id_nivel: '', sueldo_pedido: '',
@@ -79,6 +81,7 @@ function toForm(item: PostulacionRow | null, estadoDefault: number, defaultBundl
     };
   }
   return {
+    id_area: String(item.id_area ?? ''),
     id_empresa: String(item.id_empresa ?? ''),
     id_cargo: String(item.id_cargo ?? ''),
     id_estado: String(item.id_estado),
@@ -223,7 +226,7 @@ function ComboBox({ label, placeholder, items, value, onChange, onCreateNew, ent
   );
 }
 
-export default function PostulacionForm({ item, empresas, cargos, estados, plataformas, modalidades, ubicaciones, tecnologias, metodos, niveles, fasesSeguimiento, bundles, onSave, onCancel, reloadEmpresas, reloadCargos, reloadTecnologias, readOnly = false }: Props) {
+export default function PostulacionForm({ item, areas, empresas, cargos, estados, plataformas, modalidades, ubicaciones, tecnologias, metodos, niveles, fasesSeguimiento, bundles, onSave, onCancel, reloadEmpresas, reloadCargos, reloadTecnologias, readOnly = false }: Props) {
   const estadoDefault = estados.find(e => e.nombre === 'En Espera')?.id ?? (estados[0]?.id ?? 0);
   const defaultBundle = bundles?.find(b => b.es_default);
   const [form, setForm] = useState<FormState>(() => toForm(item, estadoDefault, defaultBundle));
@@ -344,6 +347,14 @@ export default function PostulacionForm({ item, empresas, cargos, estados, plata
       <div className={`grid gap-5 sm:gap-6 ${showSeguimiento ? 'grid-cols-1 lg:grid-cols-4' : 'grid-cols-1 lg:grid-cols-3'}`}>
         <div className="space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 border-b border-slate-700 pb-2">1. Detalles Generales</h3>
+
+          <div>
+            <label className="text-xs text-slate-400 mb-1 block">Área <span className="text-red-400">*</span></label>
+            <select value={form.id_area} onChange={e => set('id_area', e.target.value)} disabled={readOnly} className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500 disabled:opacity-60" required>
+              <option value="">Selecciona un área</option>
+              {areas.map(a => <option key={a.id} value={a.id}>{a.nombre}</option>)}
+            </select>
+          </div>
 
           <ComboBox label="Empresa" placeholder="Seleccionar o crear empresa" items={empresas} value={form.id_empresa} onChange={v => set('id_empresa', v)} onCreateNew={handleCreateEmpresa} entityLabel="empresa" readOnly={readOnly} />
           <ComboBox label="Cargo" placeholder="Seleccionar o crear cargo" items={cargos} value={form.id_cargo} onChange={v => set('id_cargo', v)} onCreateNew={handleCreateCargo} entityLabel="cargo" readOnly={readOnly} />
