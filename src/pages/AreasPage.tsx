@@ -1,35 +1,125 @@
-import { Menu } from 'lucide-react';
+import { useState } from 'react';
+import { LayoutGrid } from 'lucide-react';
+import { apiFetch } from '../lib/api';
+import type { Area } from '../lib/api';
+import { useAreas } from '../hooks/useData';
+import MaintainerTable from '../components/maintainer/MaintainerTable';
+import Modal from '../components/ui/Modal';
+import Header from '../components/layout/Header';
 
-interface Props {
-  onMenuOpen: () => void;
-}
+interface Props { onMenuOpen: () => void; }
 
 export default function AreasPage({ onMenuOpen }: Props) {
-  return (
-    <div className="flex-1 flex flex-col min-h-0 bg-slate-900">
-      <header className="flex items-center gap-4 px-6 py-4 bg-slate-900 border-b border-slate-800">
-        <button onClick={onMenuOpen} className="text-slate-400 hover:text-slate-200 transition-colors">
-          <Menu size={24} />
-        </button>
-        <h1 className="text-xl font-bold text-slate-100">Áreas</h1>
-      </header>
+  const { data, loading, reload } = useAreas();
+  const [page, setPage] = useState(1);
+  const perPage = 15;
+  const [editing, setEditing] = useState<Area | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [nombre, setNombre] = useState('');
+  const [color_hex, setColorHex] = useState('#38bdf8');
+  const [deleteItem, setDeleteItem] = useState<Area | null>(null);
+  const [saving, setSaving] = useState(false);
 
-      <main className="flex-1 overflow-auto p-6 flex flex-col items-center justify-center">
-        <div className="max-w-3xl w-full text-center">
-          <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-10 shadow-lg text-left">
-            <h2 className="text-2xl font-bold text-slate-200 mb-4 text-center">Sección de "Áreas" en construcción</h2>
-            <p className="text-slate-400 mb-4">
-              En resumen se debe analizar como crear la tabla ,ya que podria influir como clave foraneas a tablas como "Cargos" o "Tecnologias". Deberiamos definir si los "select" al momento de agregar o editar son influidos por esta nueva tabla
-            </p>
-            <p className="text-slate-400 mb-4">
-              Pero esto se definira luego ,de momento dejo esta nota
-            </p>
-            <p className="text-slate-400">
-              Ejemplos de areas: informatica, cocina, cajero , conserje
-            </p>
+  const openNew = () => { setEditing(null); setNombre(''); setColorHex('#38bdf8'); setFormOpen(true); };
+  const openEdit = (row: Area) => { setEditing(row); setNombre(row.nombre); setColorHex(row.color_hex); setFormOpen(true); };
+
+  const handleSave = async () => {
+    if (!nombre.trim()) return;
+    setSaving(true);
+    const payload = { nombre, color_hex };
+    if (editing) {
+      await apiFetch(`/area/${editing.id}`, { method: 'PUT', body: JSON.stringify(payload) });
+    } else {
+      await apiFetch('/area', { method: 'POST', body: JSON.stringify(payload) });
+    }
+    setSaving(false);
+    setFormOpen(false);
+    reload();
+  };
+
+  const handleDelete = async () => {
+    if (!deleteItem) return;
+    await apiFetch(`/area/${deleteItem.id}`, { method: 'DELETE' });
+    setDeleteItem(null);
+    reload();
+  };
+
+  const paged = data.slice((page - 1) * perPage, page * perPage);
+
+  return (
+    <div className="flex flex-col h-full">
+      <Header onMenuOpen={onMenuOpen} search="" onSearch={() => {}} showSearch={false} />
+      <MaintainerTable
+        title="Mantenedor de Áreas"
+        icon={<LayoutGrid size={18} className="text-slate-400" />}
+        rows={paged}
+        columns={[
+          { 
+            key: 'color_hex', 
+            label: 'Color',
+            render: (row) => (
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: row.color_hex }}></span>
+                <span className="text-slate-400 font-mono text-[10px]">{row.color_hex}</span>
+              </div>
+            )
+          },
+          { key: 'nombre', label: 'Nombre Área' }
+        ]}
+        total={data.length}
+        page={page}
+        perPage={perPage}
+        onPage={setPage}
+        onNew={openNew}
+        onEdit={openEdit}
+        onDelete={setDeleteItem}
+        loading={loading}
+      />
+
+      <Modal open={formOpen} onClose={() => setFormOpen(false)} title={editing ? 'Editar Área' : 'Nueva Área'} size="sm">
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs text-slate-400 mb-1 block">Nombre</label>
+            <input
+              type="text"
+              value={nombre}
+              onChange={e => setNombre(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleSave(); }}
+              className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500"
+              placeholder="Nombre del área"
+              autoFocus
+            />
+          </div>
+          <div>
+            <label className="text-xs text-slate-400 mb-1 block">Color Distintivo</label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                value={color_hex}
+                onChange={e => setColorHex(e.target.value)}
+                className="w-10 h-10 rounded cursor-pointer bg-slate-700 border-0 p-1"
+              />
+              <span className="text-sm text-slate-300 font-mono">{color_hex}</span>
+            </div>
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button onClick={handleSave} disabled={saving} className="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors">
+              {saving ? 'Guardando...' : 'Guardar'}
+            </button>
+            <button onClick={() => setFormOpen(false)} className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded-lg">Cancelar</button>
           </div>
         </div>
-      </main>
+      </Modal>
+
+      <Modal open={!!deleteItem} onClose={() => setDeleteItem(null)} title="Confirmar Eliminación" size="sm">
+        <div className="space-y-4">
+          <p className="text-slate-300 text-sm">¿Eliminar el área <strong className="text-slate-100">{deleteItem?.nombre}</strong>?</p>
+          <div className="flex gap-3">
+            <button onClick={handleDelete} className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold rounded-lg">Eliminar</button>
+            <button onClick={() => setDeleteItem(null)} className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm rounded-lg">Cancelar</button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
