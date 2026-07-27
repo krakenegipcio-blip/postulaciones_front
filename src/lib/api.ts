@@ -14,6 +14,7 @@ export const apiFetch = async (endpoint: string, options?: RequestInit) => {
 };
 
 export type Area = { id: number; nombre: string; color_hex: string; created_at?: string };
+export type Duracion = { id: number; nombre: string; color_hex: string; created_at?: string };
 export type Empresa = { id: number; nombre: string; created_at?: string };
 export type Cargo = { id: number; nombre: string; id_area?: number; area?: Area; orden?: number; created_at?: string };
 export type Estado = { id: number; nombre: string; color_hex: string; created_at?: string };
@@ -67,6 +68,7 @@ export type PostulacionRow = {
   id_modalidad: number | null;
   id_ubicacion: number | null;
   id_area: number | null;
+  id_duracion: number | null;
   dias_presenciales: number | null;
   sueldo_ofrecido: number | null;
   cantidad_solicitudes: number | null;
@@ -82,6 +84,7 @@ export type PostulacionRow = {
   modalidad?: Modalidad;
   ubicacion?: Ubicacion;
   area?: Area;
+  duracion?: Duracion;
   nivel_experiencia?: NivelExperiencia;
   tecnologias?: Tecnologia[];
   metodos?: MetodoEvaluacion[];

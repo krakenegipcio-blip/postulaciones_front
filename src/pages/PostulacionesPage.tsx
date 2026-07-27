@@ -4,7 +4,7 @@ import { apiFetch } from '../lib/api';
 import type { PostulacionRow } from '../lib/api';
 import { useFilterStore } from '../store/filterStore';
 import { usePostulaciones } from '../hooks/usePostulaciones';
-import { useAreas, useEmpresas, useCargos, useEstados, usePlataformas, useModalidades, useUbicaciones, useTecnologias, useMetodos, useNiveles, useFasesSeguimiento, useBundles } from '../hooks/useData';
+import { useDuraciones, useAreas, useEmpresas, useCargos, useEstados, usePlataformas, useModalidades, useUbicaciones, useTecnologias, useMetodos, useNiveles, useFasesSeguimiento, useBundles } from '../hooks/useData';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useLongPress } from '../hooks/useLongPress';
 import Header from '../components/layout/Header';
@@ -103,6 +103,7 @@ export default function PostulacionesPage({ onMenuOpen }: Props) {
   const { filters, setFilters, resetFilters } = useFilterStore();
   const { rows, total, loading, reload } = usePostulaciones(filters);
   const areas = useAreas();
+  const duraciones = useDuraciones();
   const { data: empresas, reload: reloadEmpresas } = useEmpresas();
   const { data: cargos, reload: reloadCargos } = useCargos();
   const { data: estados } = useEstados();
@@ -402,6 +403,7 @@ export default function PostulacionesPage({ onMenuOpen }: Props) {
         <PostulacionForm
           item={editing}
           areas={areas.data}
+          duraciones={duraciones.data}
           empresas={empresas}
           cargos={cargos}
           estados={estados}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, X, ChevronDown } from 'lucide-react';
 import { apiFetch } from '../../lib/api';
-import type { PostulacionRow, Empresa, Cargo, Estado, Plataforma, Modalidad, Ubicacion, Tecnologia, MetodoEvaluacion, NivelExperiencia, FaseSeguimiento, BundlePostulacion, Area } from '../../lib/api';
+import type { PostulacionRow, Empresa, Cargo, Estado, Plataforma, Modalidad, Ubicacion, Tecnologia, MetodoEvaluacion, NivelExperiencia, FaseSeguimiento, BundlePostulacion, Area, Duracion } from '../../lib/api';
 import Badge from '../ui/Badge';
 import { showToast } from '../ui/Toast';
 import SeguimientoTimeline from './SeguimientoTimeline';
@@ -9,6 +9,7 @@ import SeguimientoTimeline from './SeguimientoTimeline';
 interface Props {
   item: PostulacionRow | null;
   areas: Area[];
+  duraciones: Duracion[];
   empresas: Empresa[];
   cargos: Cargo[];
   estados: Estado[];
@@ -30,6 +31,7 @@ interface Props {
 
 type FormState = {
   id_area: string;
+  id_duracion: string;
   id_empresa: string;
   id_cargo: string;
   id_estado: string;
@@ -72,7 +74,7 @@ function toForm(item: PostulacionRow | null, estadoDefault: number, defaultBundl
       };
     }
     return {
-      id_area: '', id_empresa: '', id_cargo: '', id_estado: String(estadoDefault),
+      id_area: '', id_duracion: '', id_empresa: '', id_cargo: '', id_estado: String(estadoDefault),
       url: '', id_plataforma: '', id_modalidad: '', id_ubicacion: '',
       dias_presenciales: '', sueldo_ofrecido: '',
       cantidad_solicitudes: '', id_nivel: '', sueldo_pedido: '',
@@ -82,6 +84,7 @@ function toForm(item: PostulacionRow | null, estadoDefault: number, defaultBundl
   }
   return {
     id_area: String(item.id_area ?? ''),
+    id_duracion: String(item.id_duracion ?? ''),
     id_empresa: String(item.id_empresa ?? ''),
     id_cargo: String(item.id_cargo ?? ''),
     id_estado: String(item.id_estado),
@@ -226,7 +229,7 @@ function ComboBox({ label, placeholder, items, value, onChange, onCreateNew, ent
   );
 }
 
-export default function PostulacionForm({ item, areas, empresas, cargos, estados, plataformas, modalidades, ubicaciones, tecnologias, metodos, niveles, fasesSeguimiento, bundles, onSave, onCancel, reloadEmpresas, reloadCargos, reloadTecnologias, readOnly = false }: Props) {
+export default function PostulacionForm({ item, areas, duraciones, empresas, cargos, estados, plataformas, modalidades, ubicaciones, tecnologias, metodos, niveles, fasesSeguimiento, bundles, onSave, onCancel, reloadEmpresas, reloadCargos, reloadTecnologias, readOnly = false }: Props) {
   const estadoDefault = estados.find(e => e.nombre === 'En Espera')?.id ?? (estados[0]?.id ?? 0);
   const defaultBundle = bundles?.find(b => b.es_default);
   const [form, setForm] = useState<FormState>(() => toForm(item, estadoDefault, defaultBundle));
@@ -452,6 +455,14 @@ export default function PostulacionForm({ item, areas, empresas, cargos, estados
 
         <div className="space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 border-b border-slate-700 pb-2">{showSeguimiento ? '3. Contratación' : '3. Contratación & Seguimiento'}</h3>
+
+          <div>
+            <label className="text-xs text-slate-400 mb-1 block">Duración</label>
+            <select value={form.id_duracion} onChange={e => set('id_duracion', e.target.value)} disabled={readOnly} className="w-full bg-slate-700 border border-slate-600 text-slate-100 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500 disabled:opacity-60">
+              <option value="">Sin especificar</option>
+              {duraciones.map(d => <option key={d.id} value={d.id}>{d.nombre}</option>)}
+            </select>
+          </div>
 
           <div>
             <label className="text-xs text-slate-400 mb-1 block">Ubicación</label>

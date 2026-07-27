@@ -4,11 +4,11 @@ Este documento detalla los nuevos requerimientos solicitados para la aplicación
 
 ## Orden de Prioridades
 
-### 1. Área ⭐⭐⭐⭐⭐
+### 1. Área ⭐⭐⭐⭐⭐ OK!
 - **Descripción**: Permite filtrar y agrupar mejor los trabajos y postulaciones según su área (ej. Desarrollo, Diseño, Marketing, etc.).
 - **Detalle Técnico**: Requiere la creación de un nuevo mantenedor (CRUD de área) para que los usuarios puedan gestionar sus propias áreas o seleccionar de áreas predefinidas.
 
-### 2. Duración ⭐⭐⭐⭐☆
+### 2. Duración ⭐⭐⭐⭐☆ OK!
 - **Descripción**: Permite especificar el tipo de duración de la oferta de trabajo.
 - **Valores Iniciales**: Permanente, Proyecto, Esporádico / Por día.
 - **Detalle Técnico**: También requiere un mantenedor (CRUD de duración) para que se puedan agregar o modificar estos valores en el futuro.
@@ -29,3 +29,15 @@ Este documento detalla los nuevos requerimientos solicitados para la aplicación
 ### 5. Preguntas Frecuentes ⭐⭐⭐☆☆
 - **Descripción**: Una nueva sección dentro de la aplicación para resolver dudas comunes.
 - **Impacto**: Agrega valor al usuario final pero no afecta la lógica principal de la aplicación ni la arquitectura de la base de datos de manera crítica.
+
+
+*************************************************
+COMPLETADOS:
+### 1. Área ⭐⭐⭐⭐⭐
+- **Descripción**: Permite filtrar y agrupar mejor los trabajos y postulaciones según su área (ej. Desarrollo, Diseño, Marketing, etc.).
+- **Detalle Técnico**: Requiere la creación de un nuevo mantenedor (CRUD de área) para que los usuarios puedan gestionar sus propias áreas o seleccionar de áreas predefinidas.
+
+### 2. Duración ⭐⭐⭐⭐☆
+- **Descripción**: Permite especificar el tipo de duración de la oferta de trabajo.
+- **Valores Iniciales**: Permanente, Proyecto, Esporádico / Por día.
+- **Detalle Técnico**: También requiere un mantenedor (CRUD de duración) para que se puedan agregar o modificar estos valores en el futuro.
