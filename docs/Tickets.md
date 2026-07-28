@@ -1,3 +1,4 @@
+postgresql://neondb_owner:npg_ALT2in3cRzBl@ep-wandering-poetry-ah4wxqi1-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 
 
 AL FINAL de la seccion de "configuraciones" quiero agregar la seccion "Áreas" cuando hacemos click en ella navegamos a una pagina que contiene el texto: 
