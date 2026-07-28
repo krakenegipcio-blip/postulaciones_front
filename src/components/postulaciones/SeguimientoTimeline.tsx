@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useSeguimiento } from '../../hooks/useSeguimiento';
+import { usePreguntasFrecuentes } from '../../pages/PreguntasFrecuentesPage';
 import type { FaseSeguimiento, MetodoEvaluacion, PostulacionSeguimiento, ResultadoSeguimiento, SeguimientoPayload } from '../../lib/api';
 
 interface Props {
@@ -33,6 +34,7 @@ type StepForm = {
   id_metodo_evaluacion: string;
   nota: string;
   fecha_evento: string;
+  preguntas_ids: string[];
 };
 
 const iconMap: Record<string, LucideIcon> = {
@@ -66,6 +68,7 @@ function emptyForm(fases: FaseSeguimiento[]): StepForm {
     id_metodo_evaluacion: '',
     nota: '',
     fecha_evento: today(),
+    preguntas_ids: [],
   };
 }
 
@@ -75,6 +78,7 @@ function toForm(step: PostulacionSeguimiento): StepForm {
     id_metodo_evaluacion: step.id_metodo_evaluacion ? String(step.id_metodo_evaluacion) : '',
     nota: step.nota ?? '',
     fecha_evento: step.fecha_evento ? step.fecha_evento.split('T')[0] : today(),
+    preguntas_ids: step.preguntas ? step.preguntas.map(p => String(p.id)) : [],
   };
 }
 
@@ -84,11 +88,14 @@ function toPayload(form: StepForm): SeguimientoPayload {
     id_metodo_evaluacion: form.id_metodo_evaluacion ? Number(form.id_metodo_evaluacion) : undefined,
     nota: form.nota.trim() || undefined,
     fecha_evento: form.fecha_evento,
+    preguntas_ids: form.preguntas_ids.map(Number),
   };
 }
 
 export default function SeguimientoTimeline({ postulacionId, fases, metodos, readOnly = false }: Props) {
   const { rows, loading, error, createStep, updateStep, deleteStep } = useSeguimiento(postulacionId);
+  const { data: preguntasFrecuentes } = usePreguntasFrecuentes();
+  
   const [editing, setEditing] = useState<PostulacionSeguimiento | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<StepForm>(() => emptyForm(fases));
@@ -101,6 +108,16 @@ export default function SeguimientoTimeline({ postulacionId, fases, metodos, rea
   );
 
   const set = (key: keyof StepForm, value: string) => setForm(prev => ({ ...prev, [key]: value }));
+
+  const togglePregunta = (idStr: string) => {
+    setForm(prev => {
+      const ids = prev.preguntas_ids;
+      return {
+        ...prev,
+        preguntas_ids: ids.includes(idStr) ? ids.filter(id => id !== idStr) : [...ids, idStr]
+      };
+    });
+  };
 
   const openNew = () => {
     setEditing(null);
@@ -216,6 +233,28 @@ export default function SeguimientoTimeline({ postulacionId, fases, metodos, rea
               />
             </div>
 
+            {preguntasFrecuentes && preguntasFrecuentes.length > 0 && (
+              <div className="col-span-2">
+                <label className="text-xs text-slate-400 mb-1 block">Preguntas Realizadas</label>
+                <div className="max-h-32 overflow-y-auto bg-slate-700/50 border border-slate-600 rounded-lg p-2 space-y-1">
+                  {preguntasFrecuentes.filter(p => p.activa).map(p => {
+                    const stripHtml = (html: string) => new DOMParser().parseFromString(html, 'text/html').body.textContent || '';
+                    return (
+                      <label key={p.id} className="flex items-center gap-2 cursor-pointer hover:bg-slate-600/50 p-1.5 rounded transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={form.preguntas_ids.includes(String(p.id))}
+                          onChange={() => togglePregunta(String(p.id))}
+                          className="w-3.5 h-3.5 bg-slate-800 border-slate-600 rounded text-blue-600 focus:ring-blue-500/50 focus:ring-1"
+                        />
+                        <span className="text-xs text-slate-200 truncate">{stripHtml(p.pregunta)}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="col-span-2">
               <label className="text-xs text-slate-400 mb-1 block">Nota</label>
               <textarea
@@ -289,6 +328,22 @@ export default function SeguimientoTimeline({ postulacionId, fases, metodos, rea
                     </div>
 
                     {step.nota && <p className="text-xs text-slate-300 leading-relaxed mt-2">{step.nota}</p>}
+
+                    {step.preguntas && step.preguntas.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Preguntas de esta etapa</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {step.preguntas.map(p => {
+                            const stripHtml = (html: string) => new DOMParser().parseFromString(html, 'text/html').body.textContent || '';
+                            return (
+                              <span key={p.id} className="bg-slate-800 border border-slate-700 text-slate-300 px-2 py-0.5 rounded text-[10px]" title={stripHtml(p.respuesta)}>
+                                {stripHtml(p.pregunta)}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

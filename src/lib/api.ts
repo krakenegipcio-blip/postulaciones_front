@@ -38,29 +38,6 @@ export type FaseSeguimiento = {
 export type ResultadoSeguimiento = 'pendiente' | 'completado' | 'aprobado' | 'rechazado' | 'cancelado';
 
 export type PostulacionSeguimiento = {
-  id: number;
-  id_postulacion: number;
-  id_fase_seguimiento: number;
-  id_metodo_evaluacion: number | null;
-  nota: string | null;
-  fecha_evento: string;
-  created_at?: string;
-  updated_at?: string;
-  fase: FaseSeguimiento;
-  metodo: MetodoEvaluacion | null;
-};
-
-export type SeguimientoPayload = {
-  id_fase_seguimiento: number;
-  id_metodo_evaluacion: number | null;
-  nota: string | null;
-  fecha_evento: string;
-};
-
-export type PostulacionRow = {
-  id: number;
-  descripcion: string;
-  id_empresa: number | null;
   id_cargo: number | null;
   id_estado: number;
   url: string | null;
