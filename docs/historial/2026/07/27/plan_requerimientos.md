@@ -39,3 +39,15 @@ Se permitirá especificar un orden personalizado para las fases de seguimiento, 
 1. **Creación de Preguntas**: ¿La creación de una pregunta desde el seguimiento debe incluir la respuesta de inmediato o puede quedar solo la pregunta para completarse luego? (Se asume creación rápida solo con texto de la pregunta por ahora).
 2. **Impacto en "Orden"**: Si muevo una fase a un orden intermedio, ¿deseas que el sistema reajuste automáticamente los órdenes de las fases posteriores o se hará de forma manual?
 3. **Ubicación UI**: Se solicita "arriba de notas". Se ajustará el layout del formulario de seguimiento para cumplir con esto.
+
+
+HUMANO=> RESPUESTA PREGUNTAS:
+1. **Creación de Preguntas**: ¿La creación de una pregunta desde el seguimiento debe incluir la respuesta de inmediato o puede quedar solo la pregunta para completarse luego? (Se asume creación rápida solo con texto de la pregunta por ahora).
+R: NO , la respuesta no hace falta de inmediato, y recuerda que , o se puede crear o se puede seleccionar una pregunta desde las ya existentes. Aunque debe aparecer la opcion de agregar la respuesta de inmediato. Como esto contiene mucho texto, lo ideal es que se abra un modal grande encima para agregar estos datos , y que en el editor de la fase se vea solo las primeras palabra de la pregunta seguido a "..."
+
+2. **Impacto en "Orden"**: Si muevo una fase a un orden intermedio, ¿deseas que el sistema reajuste automáticamente los órdenes de las fases posteriores o se hará de forma manual? => si , que lo reajuste automaticamente
+
+
+ 3. **Ubicación UI**: Se solicita "arriba de notas". Se ajustará el layout del formulario de seguimiento para cumplir con esto. => Si ,porfavor
+
+NOTA PARA LA IA : postulaciones_front\readme.md leelo para tener un poco mas de contexto ,en resumen debes leer los ultimos archivos de la carpeta historial mas que nada para que conozcas lo realizado, esta de mas decir que al finalizar debes agregar un archivo ".md" con lo realizado hoy ,idealmennte con la hora en que se realizo en el titulo + un pequeña descripcion en el titulo de la rchvvio
