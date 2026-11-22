@@ -1,0 +1,86 @@
+erDiagram
+    POSTULACION {
+        int id PK
+        string descripcion
+        int id_empresa FK
+        int id_cargo FK
+        int id_estado FK
+        string url
+        int id_plataforma FK
+        int id_modalidad FK "Remoto, Híbrido, Presencial"
+        int id_ubicacion FK "Ciudad/País - Opcional si es remoto"
+        int dias_presenciales "Solo aplica si modalidad es Híbrido"
+        float sueldo_ofrecido
+        datetime fecha_postulacion
+        datetime fecha_actualizacion
+    }
+
+    EMPRESA {
+        int id PK
+        string nombre
+    }
+
+    CARGO {
+        int id PK
+        string nombre
+    }
+
+    ESTADO {
+        int id PK
+        string nombre
+        string color_hex "Color para el badge (ej: #28a745)"
+    }
+
+    PLATAFORMA {
+        int id PK
+        string nombre
+    }
+
+    MODALIDAD {
+        int id PK
+        string nombre "Remoto, Híbrido, Presencial"
+        string color_hex "Color para identificar la modalidad"
+    }
+
+    UBICACION {
+        int id PK
+        string nombre "Ej: Santiago, Región de Valparaíso"
+    }
+
+    TECNOLOGIA {
+        int id PK
+        string nombre
+        int id_padre FK
+        string color_hex "Color para el tag de la tecnología"
+    }
+
+    METODO_EVALUACION {
+        int id PK
+        string nombre
+        string color_hex "Color para el badge del método"
+    }
+
+    POSTULACION_TECNOLOGIA {
+        int id_postulacion FK
+        int id_tecnologia FK
+    }
+
+    POSTULACION_METODO {
+        int id_postulacion FK
+        int id_metodo_evaluacion FK
+    }
+
+    %% Relaciones
+    EMPRESA ||--o{ POSTULACION : "pertenece"
+    CARGO ||--o{ POSTULACION : "es para"
+    ESTADO ||--o{ POSTULACION : "está en"
+    PLATAFORMA ||--o{ POSTULACION : "vía"
+    MODALIDAD ||--o{ POSTULACION : "tipo de trabajo"
+    UBICACION ||--o{ POSTULACION : "lugar físico"
+    
+    POSTULACION ||--|{ POSTULACION_TECNOLOGIA : "usa"
+    TECNOLOGIA ||--|{ POSTULACION_TECNOLOGIA : "requiere"
+    TECNOLOGIA ||--o{ TECNOLOGIA : "es subconjunto de"
+
+    POSTULACION ||--o{ POSTULACION_METODO : "incluye"
+    METODO_EVALUACION ||--o{ POSTULACION_METODO : "se aplica"

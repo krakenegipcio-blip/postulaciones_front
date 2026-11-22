@@ -1,0 +1,19 @@
+RULES:
+-------------------------------------------------------------------------------------------------------------------------
+1- UBICACION Y MODALIDAD:
+Debemos separar la forma de trabajar (Modalidad) del lugar donde está la oficina (Ubicación).
+
+Aquí te presento la lógica para resolver esto y el modelo Mermaid actualizado:
+
+La Lógica Propuesta:
+Modalidad: Es una tabla maestra con: Remoto, Híbrido, Presencial.
+
+Ubicación: Representa la Ciudad/País de la oficina.
+
+Si es Remoto, la ubicación puede ser null o "Global", ya que no importa dónde esté la oficina.
+
+Si es Híbrido o Presencial, la ubicación es obligatoria (ej: "Santiago", "Viña del Mar").
+
+Días Semanales: He añadido un campo dias_presenciales (entero) en la tabla principal. Solo se llena si la modalidad es "Híbrido". Esto te permitirá filtrar: "Muéstrame cargos híbridos de máximo 2 días de oficina".
+
+-------------------------------------------------------------------------------------------------------------------------
